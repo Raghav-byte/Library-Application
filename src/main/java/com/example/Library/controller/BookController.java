@@ -3,6 +3,7 @@ package com.example.Library.controller;
 
 import com.example.Library.models.Book;
 import com.example.Library.services.BookServices;
+import com.example.Library.services.LibraryServices;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class BookController {
 
     @Autowired
     private BookServices bookServices;
+
+    @Autowired
+    private LibraryServices libraryServices;
 
     @ApiOperation("This api is to create book")
     @PostMapping("/createBook")
