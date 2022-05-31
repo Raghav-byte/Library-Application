@@ -1,6 +1,6 @@
 # Library-Application
 
-This is a Spring-Boot Application which have multiple models and repository interlinked with several REST API's.
+This is a Spring-Boot Application which have multiple models and repository interlinked with several REST APIs
 
 # Flow of Program 
 
