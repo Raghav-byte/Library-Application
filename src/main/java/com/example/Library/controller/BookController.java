@@ -21,9 +21,6 @@ public class BookController {
     @Autowired
     private BookServices bookServices;
 
-    @Autowired
-    private LibraryServices libraryServices;
-
     @ApiOperation("This api is to create book")
     @PostMapping("/createBook")
     public Book createBook(@RequestBody Book book)
