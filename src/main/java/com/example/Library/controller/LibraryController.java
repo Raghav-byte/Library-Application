@@ -2,6 +2,7 @@ package com.example.Library.controller;
 
 
 import com.example.Library.models.Library;
+import com.example.Library.services.BookServices;
 import com.example.Library.services.LibraryServices;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,6 +20,9 @@ public class LibraryController {
 
     @Autowired
     private LibraryServices libraryServices;
+
+    @Autowired
+    private BookServices bookServices;
 
     @ApiOperation("This api is to create library")
     @PostMapping("/createLibrary")
