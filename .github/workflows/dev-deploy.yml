@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest 
     strategy: 
       matrix: 
-        project: [Library] 
+        project: [Library-Application] 
  
     steps: 
     - name: Checkout Code 
@@ -22,7 +22,7 @@ jobs:
         java-version: 17 
  
     - name: Build with Maven (dev profile) 
-      # working-directory: ${{ matrix.project }} 
+      working-directory: ${{ matrix.project }} 
       run: mvn clean install -Dspring.profiles.active=dev 
  
     - name: Deploy JAR to DEV server 
