@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: ecommerce-service
+    port: 9000
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: Books
