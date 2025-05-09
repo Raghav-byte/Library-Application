@@ -31,7 +31,7 @@ jobs:
         username: ${{ secrets.DEV_SERVER_USER }} 
         key: ${{ secrets.DEV_SERVER_KEY }} 
         source: "target/*.jar" 
-        target: "/home/${{ secrets.DEV_SERVER_USER }}/apps/Library-Application" 
+        target: "/home/${{ secrets.DEV_SERVER_USER }}/Library-Application" 
  
     - name: Restart App on DEV server 
       uses: appleboy/ssh-action@v1.0.3 
@@ -41,4 +41,4 @@ jobs:
         key: ${{ secrets.DEV_SERVER_KEY }} 
         script: | 
           pkill -f "Library-Application.*.jar" || true 
-          nohup java -jar -Dspring.profiles.active=dev /home/${{ secrets.DEV_SERVER_USER }}/apps/Library-Application/*.jar > /home/${{ secrets.DEV_SERVER_USER }}/apps/Library-Application/app.log 2>&1 &
+          nohup java -jar -Dspring.profiles.active=dev /home/${{ secrets.DEV_SERVER_USER }}/Library-Application/*.jar > /home/${{ secrets.DEV_SERVER_USER }}/Library-Application/app.log 2>&1 &
