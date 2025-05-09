@@ -21,6 +21,14 @@ jobs:
     - name: Build with Maven (dev profile)
       run: mvn clean install -Dspring.profiles.active=dev
 
+    - name: Test SSH Connection
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.DEV_SERVER_IP }}
+        username: ${{ secrets.DEV_SERVER_USER }}
+        key: ${{ secrets.DEV_SERVER_KEY }}
+        script: echo "SSH connection successful"
+
     - name: Deploy JAR to DEV server
       uses: appleboy/scp-action@v0.1.4
       with:
