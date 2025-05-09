@@ -23,7 +23,7 @@ jobs:
  
     - name: Build with Maven (dev profile) 
       working-directory: ${{ matrix.project }} 
-      run: mvn clean package -Dspring.profiles.active=dev 
+      run: mvn clean install -Dspring.profiles.active=dev 
  
     - name: Deploy JAR to DEV server 
       uses: appleboy/scp-action@v0.1.4 
