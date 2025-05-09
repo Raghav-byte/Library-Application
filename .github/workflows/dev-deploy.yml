@@ -1,35 +1,58 @@
 name: Build & Deploy to DEV
-
 on:
   push:
     branches: [ master ]
-
 jobs:
   build-and-deploy-dev:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
-
+      
     - name: Set up Java
       uses: actions/setup-java@v4
       with:
         distribution: temurin
         java-version: 17
-
+        
     - name: Build with Maven (dev profile)
       run: mvn clean install -Dspring.profiles.active=dev
-
-    - name: Test SSH Connection
+      
+    - name: Check if JAR was built
+      run: |
+        ls -la target/
+        echo "Looking for JAR files in target directory"
+        find . -name "*.jar" | grep -v "original"
+        
+    - name: Debug SSH Key
+      run: |
+        echo "Checking SSH key format (without revealing content)"
+        if [[ ! -z "${{ secrets.DEV_SERVER_KEY }}" ]]; then
+          echo "SSH key is not empty"
+          FIRST_LINE=$(echo "${{ secrets.DEV_SERVER_KEY }}" | head -1)
+          echo "First line of key: $FIRST_LINE"
+          LINE_COUNT=$(echo "${{ secrets.DEV_SERVER_KEY }}" | wc -l)
+          echo "Number of lines in key: $LINE_COUNT"
+        else
+          echo "SSH key is empty or not set!"
+        fi
+        
+    - name: Setup SSH Key File
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.DEV_SERVER_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        
+    - name: Test SSH Connection with Debug
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.DEV_SERVER_IP }}
         username: ${{ secrets.DEV_SERVER_USER }}
         key: ${{ secrets.DEV_SERVER_KEY }}
+        debug: true
         script: echo "SSH connection successful"
-
-    - name: Deploy JAR to DEV server
+        
+    - name: Deploy JAR to DEV server with Debug
       uses: appleboy/scp-action@v0.1.4
       with:
         host: ${{ secrets.DEV_SERVER_IP }}
@@ -37,8 +60,17 @@ jobs:
         key: ${{ secrets.DEV_SERVER_KEY }}
         source: "target/*.jar"
         target: "/home/${{ secrets.DEV_SERVER_USER }}/Library-Application"
-
+        debug: true
+        
+    - name: Alternative SCP Deployment
+      if: failure()
+      run: |
+        # If the appleboy/scp-action fails, try a direct scp command
+        echo "Attempting direct SCP transfer"
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa target/*.jar ${{ secrets.DEV_SERVER_USER }}@${{ secrets.DEV_SERVER_IP }}:/home/${{ secrets.DEV_SERVER_USER }}/Library-Application/
+        
     - name: Restart App on DEV server
+      if: success()
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.DEV_SERVER_IP }}
