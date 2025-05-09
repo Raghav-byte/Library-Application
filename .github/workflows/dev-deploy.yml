@@ -34,10 +34,11 @@ jobs:
         username: ${{ secrets.DEV_SERVER_USER }}
         key: ${{ secrets.DEV_SERVER_KEY }}
         port: 22
-        timeout: 30s
-        command_timeout: 1m
+        timeout: 60s
+        command_timeout: 2m
         script: |
-          pkill -f "Library.*.jar" || true
+          echo "Stopping app..."
+          timeout 10s pkill -f "Library.*.jar" || true
           echo "Stopped any running application instances"
           
     - name: Start application
