@@ -1,0 +1,45 @@
+name: Build & Deploy to DEV 
+ 
+on: 
+  push: 
+    branches: [ master ] 
+ 
+jobs: 
+  build-and-deploy-dev: 
+    runs-on: ubuntu-latest 
+    strategy: 
+      matrix: 
+        project: [Library] 
+ 
+    steps: 
+    - name: Checkout Code 
+      uses: actions/checkout@v4 
+ 
+    - name: Set up Java 
+      uses: actions/setup-java@v4 
+      with: 
+        distribution: temurin 
+        java-version: 17 
+ 
+    - name: Build with Maven (dev profile) 
+      working-directory: ${{ matrix.project }} 
+      run: mvn clean package -Dspring.profiles.active=dev 
+ 
+    - name: Deploy JAR to DEV server 
+      uses: appleboy/scp-action@v0.1.4 
+      with: 
+        host: ${{ secrets.DEV_SERVER_IP }} 
+        username: ${{ secrets.DEV_SERVER_USER }} 
+        key: ${{ secrets.DEV_SERVER_KEY }} 
+        source: "${{ matrix.project }}/target/*.jar" 
+        target: "/home/${{ secrets.DEV_SERVER_USER }}/apps/${{ matrix.project }}" 
+ 
+    - name: Restart App on DEV server 
+      uses: appleboy/ssh-action@v1.0.3 
+      with: 
+        host: ${{ secrets.DEV_SERVER_IP }} 
+        username: ${{ secrets.DEV_SERVER_USER }} 
+        key: ${{ secrets.DEV_SERVER_KEY }} 
+        script: | 
+          pkill -f "${{ matrix.project }}.*.jar" || true 
+          nohup java -jar -Dspring.profiles.active=dev /home/${{ secrets.DEV_SERVER_USER }}/apps/${{ matrix.project }}/*.jar > /home/${{ secrets.DEV_SERVER_USER }}/apps/${{ matrix.project }}/app.log 2>&1 &
