@@ -33,6 +33,9 @@ jobs:
         host: ${{ secrets.DEV_SERVER_IP }}
         username: ${{ secrets.DEV_SERVER_USER }}
         key: ${{ secrets.DEV_SERVER_KEY }}
+        port: 22
+        timeout: 30s
+        command_timeout: 1m
         script: |
           pkill -f "Library.*.jar" || true
           echo "Stopped any running application instances"
