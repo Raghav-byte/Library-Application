@@ -14,7 +14,7 @@
 	<name>Library</name>
 	<description>Linking of multiple components</description>
 	<properties>
-		<java.version>11.0.2</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
